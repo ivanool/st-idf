@@ -218,15 +218,22 @@ static bool load_and_display_jpg_psram(const char* path)
     fread(jpg_buf, 1, file_size, f);
     fclose(f);
 
-    size_t max_out_size = (size_t)1920 * 1080 * sizeof(uint16_t);
+    // Buffer suficiente para imágenes hasta 800x600
+    size_t max_out_size = (size_t)800 * 600 * sizeof(uint16_t);
     uint8_t* decode_buf = heap_caps_malloc(max_out_size, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
     if (!decode_buf) {
-        ESP_LOGE(TAG, "Sin PSRAM para decodificación");
-        free(jpg_buf);
-        return false;
+        // Fallback a RAM interna si PSRAM falla
+        ESP_LOGW(TAG, "PSRAM no disponible, usando RAM interna");
+        max_out_size = (size_t)ST77XX_WIDTH * ST77XX_HEIGHT * sizeof(uint16_t);
+        decode_buf = heap_caps_malloc(max_out_size, MALLOC_CAP_8BIT);
+        if (!decode_buf) {
+            ESP_LOGE(TAG, "Sin memoria para decodificación");
+            free(jpg_buf);
+            return false;
+        }
+    } else {
+        ESP_LOGI(TAG, "Usando PSRAM para decodificación (%u bytes)", (unsigned)max_out_size);
     }
-
-    ESP_LOGI(TAG, "Usando PSRAM para decodificación");
 
     esp_jpeg_image_output_t img_info;
     esp_jpeg_image_cfg_t jpeg_cfg = {
@@ -320,9 +327,19 @@ void app_main(void)
     mem_monitor_start();
     
     ESP_LOGI(TAG, "Heap libre después init: %lu bytes", (unsigned long)esp_get_free_heap_size());
+    ESP_LOGI(TAG, "Display: %s %dx%d, PSRAM: %s", 
+             ST77XX_CONTROLLER_NAME, ST77XX_WIDTH, ST77XX_HEIGHT,
+             ST77XX_USE_PSRAM ? "SI" : "NO");
     
     list_spiffs_files("/spiffs");
-    load_and_display_jpg("/spiffs/cammy.jpg");
+    
+    ESP_LOGI(TAG, "Cargando imagen...");
+    bool result = load_and_display_jpg("/spiffs/cammy.jpg");
+    if (result) {
+        ESP_LOGI(TAG, "=== Imagen mostrada exitosamente ===");
+    } else {
+        ESP_LOGE(TAG, "=== ERROR mostrando imagen ===");
+    }
     
     while (1) {
         vTaskDelay(pdMS_TO_TICKS(1000));

@@ -47,11 +47,21 @@
 #endif
 
 /* ═══════════════════════════════════════════════════════════════════════════
- * Selección de controlador (descomentar uno)
+ * Selección de controlador (desde Kconfig o manual)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
-#define ST77XX_MODEL_ST7789
-// #define ST77XX_MODEL_ST7796S
+/* Si Kconfig está disponible, usar su configuración */
+#if defined(CONFIG_ST77XX_MODEL_ST7789)
+    #define ST77XX_MODEL_ST7789
+#elif defined(CONFIG_ST77XX_MODEL_ST7796S)
+    #define ST77XX_MODEL_ST7796S
+#endif
+
+/* Fallback: si no hay Kconfig, usar define manual (descomentar uno) */
+#if !defined(ST77XX_MODEL_ST7789) && !defined(ST77XX_MODEL_ST7796S)
+    // #define ST77XX_MODEL_ST7789
+    #define ST77XX_MODEL_ST7796S
+#endif
 
 /* ═══════════════════════════════════════════════════════════════════════════
  * Configuración de pines SPI

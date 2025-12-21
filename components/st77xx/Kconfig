@@ -1,0 +1,30 @@
+menu "ST77XX Display Driver"
+
+    choice ST77XX_MODEL
+        prompt "Display controller model"
+        default ST77XX_MODEL_ST7796S
+        help
+            Select the display controller model.
+
+        config ST77XX_MODEL_ST7789
+            bool "ST7789 (240x135 / 240x240)"
+            help
+                ST7789 controller for small displays.
+
+        config ST77XX_MODEL_ST7796S
+            bool "ST7796S (480x320)"
+            select SPIRAM if IDF_TARGET_ESP32S3
+            help
+                ST7796S controller for 3.5" displays.
+                Automatically enables PSRAM on ESP32-S3.
+    endchoice
+
+    config ST77XX_USE_PSRAM
+        bool "Use PSRAM for framebuffer"
+        default y if ST77XX_MODEL_ST7796S && SPIRAM
+        default n
+        depends on SPIRAM
+        help
+            Use PSRAM for display framebuffer. Recommended for ST7796S.
+
+endmenu
