@@ -1,0 +1,17 @@
+menu "Memory Monitor"
+
+config MEM_MONITOR_ENABLE
+    bool "Enable runtime memory monitor"
+    default y
+    help
+      If enabled the application will periodically log heap, SRAM and
+      PSRAM usage at the interval configured below.
+
+config MEM_MONITOR_INTERVAL_MS
+    int "Memory monitor interval (ms)"
+    default 5000
+    range 1000 60000
+    help
+      Interval in milliseconds between memory usage logs.
+
+endmenu

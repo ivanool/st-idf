@@ -1,0 +1,37 @@
+# ESP-IDF Build
+build/
+sdkconfig.old
+
+# Managed components (se descargan automáticamente)
+managed_components/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+venv/
+.env
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+*.swp
+*.swo
+*~
+.idea/
+
+# Archivos temporales
+*.tmp
+*.bak
