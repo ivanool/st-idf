@@ -280,22 +280,22 @@ void st77xx_set_orientation(st77xx_orientation_t orientation) {
     uint8_t madctl = 0;
     
 #if defined(ST77XX_MODEL_ST7789)
-    // ST7789 MADCTL values
+    // ST7789 MADCTL values (con MX=1 para corregir espejo horizontal)
     switch (orientation) {
-        case ST77XX_PORTRAIT:      madctl = 0x00; break;
-        case ST77XX_LANDSCAPE:     madctl = 0x60; break;
-        case ST77XX_PORTRAIT_INV:  madctl = 0xC0; break;
-        case ST77XX_LANDSCAPE_INV: madctl = 0xA0; break;
-        default:                   madctl = 0x00; break;
+        case ST77XX_PORTRAIT:      madctl = 0x40; break;  // MX
+        case ST77XX_LANDSCAPE:     madctl = 0x20; break;  // MV
+        case ST77XX_PORTRAIT_INV:  madctl = 0x80; break;  // MY
+        case ST77XX_LANDSCAPE_INV: madctl = 0xE0; break;  // MY+MX+MV
+        default:                   madctl = 0x40; break;
     }
 #else
-    // ST7796S MADCTL values
+    // ST7796S MADCTL values (con MX para corregir espejo horizontal)
     switch (orientation) {
-        case ST77XX_PORTRAIT:      madctl = 0x08; break;
-        case ST77XX_LANDSCAPE:     madctl = 0x68; break;
-        case ST77XX_PORTRAIT_INV:  madctl = 0xC8; break;
-        case ST77XX_LANDSCAPE_INV: madctl = 0xA8; break;
-        default:                   madctl = 0x08; break;
+        case ST77XX_PORTRAIT:      madctl = 0x48; break;  // MX + BGR
+        case ST77XX_LANDSCAPE:     madctl = 0x28; break;  // MV + BGR
+        case ST77XX_PORTRAIT_INV:  madctl = 0x88; break;  // MY + BGR
+        case ST77XX_LANDSCAPE_INV: madctl = 0xE8; break;  // MY+MX+MV + BGR
+        default:                   madctl = 0x48; break;
     }
 #endif
     

@@ -2262,6 +2262,14 @@ CONFIG_MEM_MONITOR_INTERVAL_MS=5000
 # end of Memory Monitor
 
 #
+# ST77XX Display Driver
+#
+# CONFIG_ST77XX_MODEL_ST7789 is not set
+CONFIG_ST77XX_MODEL_ST7796S=y
+CONFIG_ST77XX_USE_PSRAM=y
+# end of ST77XX Display Driver
+
+#
 # JPEG Decoder
 #
 CONFIG_JD_USE_ROM=y
