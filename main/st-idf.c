@@ -315,6 +315,16 @@ static bool load_and_display_jpg(const char* path)
 }
 
 /**
+ * @brief Número total de frames en la animación
+ */
+#define FRAME_COUNT 14
+
+/**
+ * @brief Delay entre frames en milisegundos (0.06s = 60ms)
+ */
+#define FRAME_DELAY_MS 1
+
+/**
  * @brief Punto de entrada de la aplicación
  */
 void app_main(void)
@@ -333,15 +343,17 @@ void app_main(void)
     
     list_spiffs_files("/spiffs");
     
-    ESP_LOGI(TAG, "Cargando imagen...");
-    bool result = load_and_display_jpg("/spiffs/cammy.jpg");
-    if (result) {
-        ESP_LOGI(TAG, "=== Imagen mostrada exitosamente ===");
-    } else {
-        ESP_LOGE(TAG, "=== ERROR mostrando imagen ===");
-    }
+    ESP_LOGI(TAG, "Reproduciendo video (%d frames @ %dms)...", FRAME_COUNT, FRAME_DELAY_MS);
     
+    char path[64];
     while (1) {
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        for (int i = 0; i < FRAME_COUNT; i++) {
+            snprintf(path, sizeof(path), "/spiffs/frame_%02d_delay-0.15s.jpg", i);
+            load_and_display_jpg(path);
+            vTaskDelay(pdMS_TO_TICKS(FRAME_DELAY_MS));
+        }
     }
 }
+
+
+
